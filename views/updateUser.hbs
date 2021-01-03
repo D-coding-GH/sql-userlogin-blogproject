@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/public/update.css">
+    <title>Document</title>
+</head>
+<body>
+     {{>nav}}
+    <div>
+        <form action="/updated/{{userId}}" method="POST">
+
+            <label for="userName">name</label>
+            <input type="text" name="userName" id="userName" value="{{name}}"  /><br />
+        
+        
+            <label for="userAge">age</label>
+            <input type="text" name="userAge" id="userAge" value="{{age}}"/><br />
+        
+        
+            <label for="userLocation">location</label>
+            <input type="text" name="userLocation" id="userLocation" value="{{location}}" /><br />
+        
+            <label for="userEmail">email</label>
+            <input type="text" name="userEmail" id="userEmail" value="{{email}}" /><br />
+
+            <button type="submit">Save Update</button>
+        </form>
+    </div>
+    
+</body>
+</html>

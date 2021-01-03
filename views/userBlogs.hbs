@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+     {{>nav}}
+
+    <h1>user blog post</h1>
+
+<div>    
+{{#each blogs}}
+
+ <li>title:{{this.title}},
+ body:{{this.body}}</li>
+       
+
+        
+    
+ 
+{{/each }}
+</div>
+
+    
+</body>
+</html>

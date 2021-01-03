@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    {{>nav}}
+    <h1>userinfo page</h1>
+
+<li>Name:{{name}},Age:{{age}},Location:{{location}},email:{{email}}</li>
+
+<form action="/createBlog/{{userId}}" method="get">
+    <button type="submit"> write blog</button>
+</form>
+
+
+<form action="/viewblogs/{{userId}}" method="get">
+    <button type="submit"> user blogs</button>
+</form>
+    
+</body>
+</html>

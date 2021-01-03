@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/public/userSelect.css">
+    <title>Edit User</title>
+</head>
+<body>
+<h1>userEdit</h1>
+ {{>nav}}
+    <div>
+        {{#each users}}
+    
+        <li>ID:{{this.id}},Name:{{this.name}},Age:{{this.age}},Location:{{this.location}},email:{{this.email}}
+    
+            <form action="/update/{{this.id}}" method="GET">
+                <button type="submit"> update User </button>
+            </form>
+    
+            <form action="/deleteuser/{{this.id}}" method="POST">
+                <button type="submit"> Delete User </button>
+            </form>
+            <form   action="/userInfo{{this.id}}" method="POST" >
+                <button type="submit"> user info</button>
+            </form>
+    
+        </li>
+    
+        {{/each}}
+    </div>
+
+    
+</body>
+</html>
+
+     

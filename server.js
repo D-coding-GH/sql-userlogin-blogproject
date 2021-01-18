@@ -6,6 +6,7 @@ const hbs = require('hbs');
 const bcrypt = require('bcryptjs')
 const cookieParser = require('cookie-parser')
 const jwt = require("jsonwebtoken")
+let authenticated = false;
 
 
 dotenv.config({ path: './.env' })
@@ -15,8 +16,7 @@ const app = express();
 const db = mysql.createConnection({
     host: process.env.DATABASE_HOST,
     user: process.env.DATABASE_USER,
-    password: "root",
-    // can not protect password
+    password: process.env.DATABASE_PASSWORD,
     port: 8889,
     database: process.env.DATABASE,
 
@@ -69,7 +69,8 @@ app.post('/userLogin', async (req, res) => {
 
         if (!email || !password) {
             return res.status(400), render('loginPage', {
-                message: "please check details"
+                message: "please check details",
+                loggedIn: authenticated,
             })
         }
 
@@ -80,22 +81,26 @@ app.post('/userLogin', async (req, res) => {
 
             if (!results || !(await bcrypt.compare(password, results[0].password)))
                 res.status(401).render('loginPage', {
-                    message: "email or password incorrect"
+                    message: "email or password incorrect",
+                    loggedIn: authenticated,
                 })
             else {
+                 authenticated = true;
                 const id = results[0].id
                 const token = jwt.sign({ id }, process.env.JWT_SECERT, {
-                    expiresIn: Process.env.JWT_EXPIRES_IN
+                    expiresIn: process.env.JWT_EXPIRES_IN
                 })
                 console.log("the token is: " + token)
                 const cookieOptions = {
                     expires: new Date(
                         Date.now() + process.env.JWT_COOKIE_EXPIRES * 24 * 60 * 60 * 1000
-                    ),
+                    ),                            
                     httpOnly: true
                 }
                 res.cookie('jwt', token, cookieOptions);
-                res.status(200).redirect("/profileUser:userId")
+                res.status(200).render("homepage", {
+                    loggedIn: authenticated,
+                })
             }
         })
 
@@ -108,6 +113,27 @@ app.get('/profileAdmin', (req, res) => {
   
     res.render('profileAdmin');
 });
+
+// app.get("/profile/:id", (req, res) => {
+//     const id = req.params.id;
+//     const user = [id];
+//     db.query("SELECT * FROM users where id = ?", user, (error, results) => {
+//         res.render("profile", {
+            
+//             name: results[0].name,
+//             location: results[0].location,
+//             age: results[0].age,
+//             email: results[0].email,
+
+//             // loggedIn: authenticated,
+
+//         });
+//     })
+
+// })
+
+
+
 
 app.get('/register', (req, res) => {
     res.render('register');
@@ -258,11 +284,6 @@ app.post('/updated/:userId', (req, res,) => {
 })
 
 
-
-
-app.get('/profileUser', (req, res) => {
-    res.render('/profileUser');
-})
 
 
 app.post('/userInfo:userId', (req, res) => {

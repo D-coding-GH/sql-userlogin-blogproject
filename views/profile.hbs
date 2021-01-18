@@ -9,12 +9,12 @@
     <title>Document</title>
 </head>
 <body>
-    {{>nav}}
+    {{>nav this}}
     <h1>userinfo page</h1>
 <div class="container-sm" >
     <div class="mb-3">
         <div class=".userSelectLi" class="mb-3">
-            <dd>Name:{{name}},Age:{{age}},Location:{{location}},email:{{email}}</dd>
+            <dd>Name:{{user.name}},Age:{{user.age}},Location:{{user.location}},email:{{user.email}}</dd>
         </div>
 
 

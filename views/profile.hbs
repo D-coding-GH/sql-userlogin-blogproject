@@ -11,24 +11,44 @@
 <body>
     {{>nav this}}
     <h1>userinfo page</h1>
-<div class="container-sm" >
-    <div class="mb-3">
-        <div class=".userSelectLi" class="mb-3">
-            <dd>Name:{{name}},Age:{{age}},Location:{{location}},email:{{email}}</dd>
+
+         <div class="container">
+            <div class="row g-2">
+                <div class="col-6">
+                    <div class="p-3 border bg-light">Name: {{name}}</div>
+        
+                </div>
+                <div class="col-6">
+                    <div class="p-3 border bg-light">Age: {{age}}</div>
+        
+                </div>
+                <div class="col-6">
+                    <div class="p-3 border bg-light">Location: {{location}}</div>
+                </div>
+                <div class="col-6">
+                    <div class="p-3 border bg-light">Email: {{email}}</div>
+                </div>
+            </div>
         </div>
 
+
+
+
+    <div class="profileButtons" >
         <form action="/updateProfile/{{userId}}" method="get">
             <button class="btn btn-primary" type="submit"> update profile</button>
         </form>
 
         <form action="/createBlog/{{userId}}" method="get">
-            <button class="btn btn-primary" type="submit"> write blog</button>
+            <button class="btn btn-primary" type="submit"> create post</button>
         </form>
 
 
         <form action="/viewblogs/{{userId}}" method="get">
             <button class="btn btn-primary" type="submit"> user blogs</button>
         </form>
+    </div>
+
     </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script> 

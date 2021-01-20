@@ -28,6 +28,16 @@ nav li a{
     list-style: none;
 }
 
+.navContainer{
+    
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    padding: 10px 8px;
+}
+
+
+
 .buttonUS{
     display: flex;
     justify-content: space-evenly;
@@ -55,4 +65,27 @@ nav li a{
     justify-content: space-evenly;
     flex-direction: column;
     padding: 5px 8px;
+}
+
+.profileButtons{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    padding: 30px 8px;
+}
+
+.updateContainer{
+
+    display: flex;
+    justify-content:center;
+    padding: 30px 8px;
+}
+
+.createBlog{
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    padding: 30px 8px;
+
 }

@@ -154,8 +154,14 @@ app.post('/userLogin', async (req, res) => {
                     httpOnly: true
                 }
                 res.cookie('jwt', token, cookieOptions);
-                res.status(200).render("homepage", {
-                    loggedIn: authenticated,
+                res.status(200).render( "profile", {
+                userId: id,    
+                name: results[0].name,
+                age: results[0].age,
+                location: results[0].location,
+                email: results[0].email,
+
+                loggedIn: authenticated,
                 })
             }
         })
@@ -167,39 +173,161 @@ app.post('/userLogin', async (req, res) => {
 
 
 
-app.get("/profile/:id", (req, res) => {
+app.get('/updateProfile/:id', (req, res,) => {
 
     const user = req.params.id;
-
-
-    db.query( "SELECT * FROM users WHERE id=?" , [user], (error, results) => {
-        if (error) {
+    console.log(req.params.id)
+    db.query('SELECT * FROM users WHERE id=?', [user], (error, results) => {
+        
+        console.log(results)
+        if (!error) {
             console.log(error)
-            res.send("theres an error")
-        } else {
-            console.log(results)
-
-            res.render('profile',  {
-
-               userId:user,
-
+            res.render("updateDetails", {
+                userId: user,
                 name: results[0].name,
                 age: results[0].age,
                 location: results[0].location,
                 email: results[0].email,
 
-
-                loggedIn: authenticated,
-
-
+                loggedIn: authenticated
             })
+        }
+    })
+})
+
+
+
+
+///.........email check broken(wont let user submit the same email)
+//..........needs to apply hashed password
+///..........needs to render profile page after submit
+
+
+
+app.post('/updated/:userId', (req, res,) => {
+
+
+        const name = req.body.userName;
+        console.log(name)
+        const age = req.body.userAge;
+        console.log(age)
+        const location = req.body.userLocation;
+        console.log(location)
+        const email = req.body.userEmail;
+        console.log(email)
+        const password = req.body.userPassword;
+        console.log(password)
+    
+        const id = req.params.userId;
+        console.log(id)
+    
+    
+        const query = 'UPDATE users SET name = ?, age = ?, location = ?, email = ?, password = ?  WHERE id = ?';
+    
+        let user = [name, age, location, email, password, id];
+    
+        db.query("SELECT email from users WHERE email = ?", [email], (error, results) => {
+    
+            if (error) {
+                console.log(error)
+                res.send("There was an error")
+            } else {
+    
+                if (results.length > 0) {
+                    const errorMessage = "ERROR EMAIL ALREADY EXISTS";
+                    res.render("errorpage", {
+                        errorMessage: errorMessage
+    
+                    })
+    
+    
+                } else {
+    
+                    db.query(query, user, (error, results) => {
+    
+                        if (error) {
+                            console.log(error)
+                            res.send("There was an error")
+                        } else {
+                            console.log(results)
+                            res.send('user updated')
+                        }
+                    })
+                }
+    
+    
+            }
+        })
+    })
+
+app.get('/createBlog/:userId', (req, res) => {
+    const id = req.params.userId;
+    
+    res.render('createBlog', { userId: id, 
+        loggedIn: authenticated
+    });
+})
+
+app.post('/createBlog/:userId', (req, res) => {
+
+    const id = req.params.userId;
+    console.log(id);
+
+
+    const title = req.body.title
+    console.log(title)
+    const body = req.body.body
+    console.log(body)
+
+
+    db.query('INSERT INTO blog_posts SET ?', { title: title, body: body, users_id: id }, (error, results) => {
+
+        if (error) {
+            console.log(error)
+            res.send("theres an error")
+        } else {
+            console.log(results)
+            res.send('blog updated')
         }
     })
 });
 
-// app.get('/profile', (req, res) => {
-//     res.render('profile');
+
+// app.get('/userBlogs', (req, res) => {
+//     res.render('userBlogs');
+// })
+
+
+// app.get('/viewblogs/:userId', (req, res) => {
+
+//     const id = req.params.userId
+//     console.log(id)
+//     const user = [id]
+//     console.log(user)
+
+//     db.query('SELECT a.*, b.name FROM blog_posts a INNER join users b on a.users_id = b.id WHERE users_id = ? order by dt desc',
+
+//         user, (error, results) => {
+
+//             results.forEach((result, i) => {//...........need to fix time stamp
+//                 results[i].dt = timestampToDate(results[i].dt)
+//             })
+//             if (results.length > 0) {
+
+//                 res.render('userBlogs', { blogs: results,
+//                     loggedIn: authenticated           });
+//             } else {
+
+//                 console.log(error)
+//                 res.send("theres an error")
+
+//             }
+//         })
 // });
+
+
+
+
 
 
 // app.get('/userSelect', (req, res) => {
@@ -215,18 +343,6 @@ app.get("/profile/:id", (req, res) => {
 
 
 
-// app.get('/update/:id', (req, res,) => {
-
-    // const user = req.params.id;
-    // db.query('SELECT * FROM users WHERE id=?', [user], (error, results) => {
-    //     if (!error) {
-
-    //         res.render("updateUser", { userId: user, name: results[0].name, age: results[0].age, location: results[0].location, email: results[0].email })
-    //     }
-    // })
-
-
-// })
 
 
 
@@ -412,7 +528,7 @@ app.get("/profile/:id", (req, res) => {
 
 
 app.listen(5001, () => {
-    console.log("server started on port 5000")
+    console.log("server started on port 5001")
 });
 
 

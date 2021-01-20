@@ -14,10 +14,12 @@
 <div class="container-sm" >
     <div class="mb-3">
         <div class=".userSelectLi" class="mb-3">
-            <dd>Name:{{user.name}},Age:{{user.age}},Location:{{user.location}},email:{{user.email}}</dd>
+            <dd>Name:{{name}},Age:{{age}},Location:{{location}},email:{{email}}</dd>
         </div>
 
-
+        <form action="/updateProfile/{{userId}}" method="get">
+            <button class="btn btn-primary" type="submit"> update profile</button>
+        </form>
 
         <form action="/createBlog/{{userId}}" method="get">
             <button class="btn btn-primary" type="submit"> write blog</button>

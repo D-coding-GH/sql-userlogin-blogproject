@@ -56,6 +56,62 @@ app.get('/', (req, res) => {
     res.render('homepage');
 });
 
+
+app.post('/registerUser', async (req, res) => {
+
+    const name = req.body.userName;
+    const age = req.body.userAge;
+    const location = req.body.userLocation;
+    const email = req.body.userEmail;
+    const password = req.body.userPassword;
+    const passwordConfirm = req.body.PasswordConfirm;
+
+    let hashedPassword = await bcrypt.hash(password, 8)
+    db.query(
+        'SELECT email from users WHERE email = ?', [email],
+        (error, results) => {
+            if (results.length > 0) {
+                const errorMessage = "ERROR EMAIL ALREADY EXISTS";
+                console.log(error)
+
+                res.render("register", {
+                    errorMessage: errorMessage
+                })
+
+
+            } else if (password !== passwordConfirm) {
+                const errorMessage = "ERROR PASSWORDS DO NOT MATCH";
+                console.log(error)
+                res.render('register', {
+                    errorMessage: errorMessage
+                })
+
+            } else {
+                db.query('INSERT INTO users SET ?',
+
+
+                    { name: name, age: age, location: location, email: email, password: hashedPassword }, async (error, results) => {
+
+                        if (error) {
+                            console.log(error)
+                            res.send("theres an error")
+                        } else {
+                            res.render('homepage', {
+                                message: "user registered"
+                            })
+                        }
+                    })
+            }
+        })
+
+    console.log(hashedPassword)
+})
+
+app.get('/register', (req, res) => {
+    res.render('register');
+});
+
+
 app.get('/loginPage', (req, res) => {
     res.render('loginPage');
 });
@@ -109,289 +165,237 @@ app.post('/userLogin', async (req, res) => {
     }
 })
 
-app.get('/profileAdmin', (req, res) => {
-  
-    res.render('profileAdmin');
+
+
+app.get("/profile/:id", (req, res) => {
+
+    const user = req.params.id;
+
+
+    db.query( "SELECT * FROM users WHERE id=?" , [user], (error, results) => {
+        if (error) {
+            console.log(error)
+            res.send("theres an error")
+        } else {
+            console.log(results)
+
+            res.render('profile',  {
+
+               userId:user,
+
+                name: results[0].name,
+                age: results[0].age,
+                location: results[0].location,
+                email: results[0].email,
+
+
+                loggedIn: authenticated,
+
+
+            })
+        }
+    })
 });
 
-// app.get("/profile/:id", (req, res) => {
-//     const id = req.params.id;
-//     const user = [id];
-//     db.query("SELECT * FROM users where id = ?", user, (error, results) => {
-//         res.render("profile", {
-            
-//             name: results[0].name,
-//             location: results[0].location,
-//             age: results[0].age,
-//             email: results[0].email,
+// app.get('/profile', (req, res) => {
+//     res.render('profile');
+// });
 
-//             // loggedIn: authenticated,
 
+// app.get('/userSelect', (req, res) => {
+//     db.query("SELECT * FROM users", (error, results) => {
+
+
+//         res.render('userSelect', {
+//             users: results
 //         });
-//     })
+//     });
+
+// });
+
+
+
+// app.get('/update/:id', (req, res,) => {
+
+    // const user = req.params.id;
+    // db.query('SELECT * FROM users WHERE id=?', [user], (error, results) => {
+    //     if (!error) {
+
+    //         res.render("updateUser", { userId: user, name: results[0].name, age: results[0].age, location: results[0].location, email: results[0].email })
+    //     }
+    // })
+
 
 // })
 
 
 
 
-app.get('/register', (req, res) => {
-    res.render('register');
-});
+// app.post('/updated/:userId', (req, res,) => {
 
 
+//     const name = req.body.userName;
+//     console.log(name)
+//     const age = req.body.userAge;
+//     console.log(age)
+//     const location = req.body.userLocation;
+//     console.log(location)
+//     const email = req.body.userEmail;
+//     console.log(email)
+//     const password = req.body.userPassword;
+//     console.log(password)
 
+//     const id = req.params.userId;
+//     console.log(id)
 
-app.post('/registerUser', async (req, res) => {
 
-    const name = req.body.userName;
-    const age = req.body.userAge;
-    const location = req.body.userLocation;
-    const email = req.body.userEmail;
-    const password = req.body.userPassword;
-    const passwordConfirm = req.body.PasswordConfirm;
+//     const query = 'UPDATE users SET name = ?, age = ?, location = ?, email = ?, password = ?  WHERE id = ?';
 
-    let hashedPassword = await bcrypt.hash(password, 8)
-    db.query(
-        'SELECT email from users WHERE email = ?', [email],
-        (error, results) => {
-            if (results.length > 0) {
-                const errorMessage = "ERROR EMAIL ALREADY EXISTS";
-                console.log(error)
+//     let user = [name, age, location, email, password, id];
 
-                res.render("register", {
-                    errorMessage: errorMessage
-                })
+//     db.query("SELECT email from users WHERE email = ?", [email], (error, results) => {
 
+//         if (error) {
+//             console.log(error)
+//             res.send("There was an error")
+//         } else {
 
-            } else if (password !== passwordConfirm) {
-                const errorMessage = "ERROR PASSWORDS DO NOT MATCH";
-                console.log(error)
-                res.render('register', {
-                    errorMessage: errorMessage
-                })
+//             if (results.length > 0) {//.......email check broken
+//                 const errorMessage = "ERROR EMAIL ALREADY EXISTS";
+//                 res.render("errorpage", {
+//                     errorMessage: errorMessage
 
-            } else {
-                db.query('INSERT INTO users SET ?',
+//                 })
 
 
-                    { name: name, age: age, location: location, email: email, password: hashedPassword }, async (error, results) => {
+//             } else {
 
-                        if (error) {
-                            console.log(error)
-                            res.send("theres an error")
-                        } else {
-                            res.render('homepage', {
-                                message: "user registered"
-                            })
-                        }
-                    })
-            }
-        })
+//                 db.query(query, user, (error, results) => {
 
-    console.log(hashedPassword)
-})
+//                     if (error) {
+//                         console.log(error)
+//                         res.send("There was an error")
+//                     } else {
+//                         console.log(results)
+//                         res.send('user updated')
+//                     }
+//                 })
+//             }
 
 
+//         }
+//     })
+// })
 
 
 
 
+// app.post('/userInfo:userId', (req, res) => {
 
-app.get('/userSelect', (req, res) => {
-    db.query("SELECT * FROM users", (error, results) => {
 
+//     const user = req.params.userId
 
-        res.render('userSelect', {
-            users: results
-        });
-    });
+//     db.query('SELECT * FROM users WHERE id=?',
 
-});
+//         [user], (error, results) => {
 
+//             if (error) {
+//                 console.log(error)
+//                 res.send("theres an error")
+//             } else {
+//                 console.log(results)
+//                 res.render('userInformation', { userId: user, name: results[0].name, age: results[0].age, location: results[0].location, email: results[0].email })
+//             }
+//         })
+// });
 
+// app.get('/userBlogs', (req, res) => {
+//     res.render('userBlogs');
+// })
 
-app.get('/update/:id', (req, res,) => {
 
-    const user = req.params.id;
-    db.query('SELECT * FROM users WHERE id=?', [user], (error, results) => {
-        if (!error) {
+// app.get('/viewblogs/:userId', (req, res) => {
 
-            res.render("updateUser", { userId: user, name: results[0].name, age: results[0].age, location: results[0].location, email: results[0].email })
-        }
-    })
+//     const id = req.params.userId
+//     console.log(id)
+//     const user = [id]
+//     console.log(user)
 
+//     db.query('SELECT a.*, b.name FROM blog_posts a INNER join users b on a.users_id = b.id WHERE users_id = ? order by dt desc',
 
-})
+//         user, (error, results) => {
 
+//             results.forEach((result, i) => {//...........need to fix time stamp
+//                 results[i].dt = timestampToDate(results[i].dt)
+//             })
+//             if (results.length > 0) {
 
+//                 res.render('userBlogs', { blogs: results });
+//             } else {
 
+//                 console.log(error)
+//                 res.send("theres an error")
 
-app.post('/updated/:userId', (req, res,) => {
+//             }
+//         })
+// });
 
 
-    const name = req.body.userName;
-    console.log(name)
-    const age = req.body.userAge;
-    console.log(age)
-    const location = req.body.userLocation;
-    console.log(location)
-    const email = req.body.userEmail;
-    console.log(email)
-    const password = req.body.userPassword;
-    console.log(password)
+// app.get('/createBlog/:userId', (req, res) => {
+//     const id = req.params.userId;
+//     res.render('createBlog', { userId: id });
+// })
 
-    const id = req.params.userId;
-    console.log(id)
 
 
-    const query = 'UPDATE users SET name = ?, age = ?, location = ?, email = ?, password = ?  WHERE id = ?';
+// app.post('/createBlog/:userId', (req, res) => {
 
-    let user = [name, age, location, email, password, id];
+//     const id = req.params.userId;
+//     console.log(id);
 
-    db.query("SELECT email from users WHERE email = ?", [email], (error, results) => {
 
-        if (error) {
-            console.log(error)
-            res.send("There was an error")
-        } else {
+//     const title = req.body.title
+//     console.log(title)
+//     const body = req.body.body
+//     console.log(body)
 
-            if (results.length > 0) {//.......email check broken
-                const errorMessage = "ERROR EMAIL ALREADY EXISTS";
-                res.render("errorpage", {
-                    errorMessage: errorMessage
 
-                })
+//     db.query('INSERT INTO blog_posts SET ?', { title: title, body: body, users_id: id }, (error, results) => {
 
+//         if (error) {
+//             console.log(error)
+//             res.send("theres an error")
+//         } else {
+//             console.log(results)
+//             res.send('blog updated')
+//         }
+//     })
+// });
 
-            } else {
 
-                db.query(query, user, (error, results) => {
 
-                    if (error) {
-                        console.log(error)
-                        res.send("There was an error")
-                    } else {
-                        console.log(results)
-                        res.send('user updated')
-                    }
-                })
-            }
+// app.get('/deletePage', (req, res) => {
+//     res.render('deletePage');
+// });
 
 
-        }
-    })
-})
+// app.post("/deleteuser/:id", (req, res) => {
 
+//     const id = req.params.id;
+//     console.log(id)
+//     let query = 'DELETE FROM users WHERE id= ?';
+//     let user = [id];
 
 
+//     db.query(query, user, (error, results) => {
+//         if (error) {
+//             res.send("there was an error")
+//         } else {
+//             res.render("deletePage")
+//         }
+//     })
 
-app.post('/userInfo:userId', (req, res) => {
-
-
-    const user = req.params.userId
-
-    db.query('SELECT * FROM users WHERE id=?',
-
-        [user], (error, results) => {
-
-            if (error) {
-                console.log(error)
-                res.send("theres an error")
-            } else {
-                console.log(results)
-                res.render('userInformation', { userId: user, name: results[0].name, age: results[0].age, location: results[0].location, email: results[0].email })
-            }
-        })
-});
-
-app.get('/userBlogs', (req, res) => {
-    res.render('userBlogs');
-})
-
-
-app.get('/viewblogs/:userId', (req, res) => {
-
-    const id = req.params.userId
-    console.log(id)
-    const user = [id]
-    console.log(user)
-
-    db.query('SELECT a.*, b.name FROM blog_posts a INNER join users b on a.users_id = b.id WHERE users_id = ? order by dt desc',
-
-        user, (error, results) => {
-
-            results.forEach((result, i) => {//...........need to fix time stamp
-                results[i].dt = timestampToDate(results[i].dt)
-            })
-            if (results.length > 0) {
-
-                res.render('userBlogs', { blogs: results });
-            } else {
-
-                console.log(error)
-                res.send("theres an error")
-
-            }
-        })
-});
-
-
-app.get('/createBlog/:userId', (req, res) => {
-    const id = req.params.userId;
-    res.render('createBlog', { userId: id });
-})
-
-
-
-app.post('/createBlog/:userId', (req, res) => {
-
-    const id = req.params.userId;
-    console.log(id);
-
-
-    const title = req.body.title
-    console.log(title)
-    const body = req.body.body
-    console.log(body)
-
-
-    db.query('INSERT INTO blog_posts SET ?', { title: title, body: body, users_id: id }, (error, results) => {
-
-        if (error) {
-            console.log(error)
-            res.send("theres an error")
-        } else {
-            console.log(results)
-            res.send('blog updated')
-        }
-    })
-});
-
-
-
-app.get('/deletePage', (req, res) => {
-    res.render('deletePage');
-});
-
-
-app.post("/deleteuser/:id", (req, res) => {
-
-    const id = req.params.id;
-    console.log(id)
-    let query = 'DELETE FROM users WHERE id= ?';
-    let user = [id];
-
-
-    db.query(query, user, (error, results) => {
-        if (error) {
-            res.send("there was an error")
-        } else {
-            res.render("deletePage")
-        }
-    })
-
-})
+// })
 
 
 

@@ -53,8 +53,12 @@ app.set('view engine', 'hbs');
 app.set('views', viewsPath);
 
 app.get('/', (req, res) => {
-    res.render('homepage');
+    
+    res.render('homepage',{
+        loggedIn: authenticated
+    });
 });
+
 
 
 app.post('/registerUser', async (req, res) => {
@@ -96,8 +100,10 @@ app.post('/registerUser', async (req, res) => {
                             console.log(error)
                             res.send("theres an error")
                         } else {
-                            res.render('homepage', {
-                                message: "user registered"
+                            res.render( "loginPage", {
+                               
+                
+                                loggedIn: authenticated,
                             })
                         }
                     })
@@ -172,6 +178,31 @@ app.post('/userLogin', async (req, res) => {
 })
 
 
+app.get('/profile/:id', (req, res) => {
+
+    const user = req.params.id;
+    console.log(req.params.id)
+    db.query('SELECT * FROM users WHERE id=?', [user], (error, results) => {
+        
+        console.log(results)
+        if (!error) {
+            console.log(error)
+            res.render("profile", {
+                
+                userId: user,
+                name: results[0].name,
+                age: results[0].age,
+                location: results[0].location,
+                email: results[0].email,
+
+                loggedIn: authenticated 
+            })
+            
+        }
+    })
+})
+   
+
 
 app.get('/updateProfile/:id', (req, res,) => {
 
@@ -183,14 +214,16 @@ app.get('/updateProfile/:id', (req, res,) => {
         if (!error) {
             console.log(error)
             res.render("updateDetails", {
+                
                 userId: user,
                 name: results[0].name,
                 age: results[0].age,
                 location: results[0].location,
                 email: results[0].email,
 
-                loggedIn: authenticated
+                loggedIn: authenticated 
             })
+            
         }
     })
 })
@@ -199,12 +232,9 @@ app.get('/updateProfile/:id', (req, res,) => {
 
 
 ///.........email check broken(wont let user submit the same email)
-//..........needs to apply hashed password
-///..........needs to render profile page after submit
 
 
-
-app.post('/updated/:userId', (req, res,) => {
+app.post('/updated/:userId', async (req, res,) => {
 
 
         const name = req.body.userName;
@@ -216,15 +246,17 @@ app.post('/updated/:userId', (req, res,) => {
         const email = req.body.userEmail;
         console.log(email)
         const password = req.body.userPassword;
-        console.log(password)
+        
     
         const id = req.params.userId;
         console.log(id)
     
-    
+        let hashedPassword = await bcrypt.hash(password, 8)
+
+        console.log(hashedPassword)
         const query = 'UPDATE users SET name = ?, age = ?, location = ?, email = ?, password = ?  WHERE id = ?';
     
-        let user = [name, age, location, email, password, id];
+        let user = [name, age, location, email, hashedPassword, id];
     
         db.query("SELECT email from users WHERE email = ?", [email], (error, results) => {
     
@@ -234,11 +266,14 @@ app.post('/updated/:userId', (req, res,) => {
             } else {
     
                 if (results.length > 0) {
-                    const errorMessage = "ERROR EMAIL ALREADY EXISTS";
-                    res.render("errorpage", {
-                        errorMessage: errorMessage
-    
-                    })
+                   
+                        const errorMessage = "ERROR EMAIL ALREADY EXISTS";
+                        console.log(error)
+        
+                        res.render("profile", {
+                            errorMessage: errorMessage,
+                            loggedIn: authenticated 
+                        })
     
     
                 } else {
@@ -250,7 +285,7 @@ app.post('/updated/:userId', (req, res,) => {
                             res.send("There was an error")
                         } else {
                             console.log(results)
-                            res.send('user updated')
+                            res.render('profile')
                         }
                     })
                 }
@@ -260,6 +295,30 @@ app.post('/updated/:userId', (req, res,) => {
         })
     })
 
+////////........delet button needs linking to route
+
+app.post("/deleteuser/::userId", (req, res) => {
+
+    const id = req.params.id;
+    console.log(id)
+    let query = 'DELETE FROM users WHERE id= ?';
+    let user = [id];
+
+
+    db.query(query, user, (error, results) => {
+        if (error) {
+            res.send("there was an error")
+        } else {
+            const message = "PROFILE DELETED";
+            
+            res.render("homepage", {
+                message: message } 
+                )
+        }
+    })
+
+})
+
 app.get('/createBlog/:userId', (req, res) => {
     const id = req.params.userId;
     
@@ -267,6 +326,8 @@ app.get('/createBlog/:userId', (req, res) => {
         loggedIn: authenticated
     });
 })
+
+
 
 app.post('/createBlog/:userId', (req, res) => {
 
@@ -277,7 +338,7 @@ app.post('/createBlog/:userId', (req, res) => {
     const title = req.body.title
     console.log(title)
     const body = req.body.body
-    console.log(body)
+    console.log(body)    
 
 
     db.query('INSERT INTO blog_posts SET ?', { title: title, body: body, users_id: id }, (error, results) => {
@@ -286,62 +347,48 @@ app.post('/createBlog/:userId', (req, res) => {
             console.log(error)
             res.send("theres an error")
         } else {
-            console.log(results)
-            res.send('blog updated')
+            const message = "blog updated"
+            res.render("profile", {
+                userId: id,    
+                name: results[0].name,
+                age: results[0].age,
+                location: results[0].location,
+                email: results[0].email,
+
+                loggedIn: authenticated,
+                message:message,
+
+                
+            })
         }
     })
 });
 
 
-// app.get('/userBlogs', (req, res) => {
-//     res.render('userBlogs');
-// })
+app.get('/userBlogs/:userId', (req, res) => {
 
+    const id = req.params.userId  
+    console.log(id)
+    const user = [id]
+    console.log(user)
 
-// app.get('/viewblogs/:userId', (req, res) => {
+    db.query('SELECT a.*, b.name FROM blog_posts a INNER join users b on a.users_id = b.id WHERE users_id = ?',
 
-//     const id = req.params.userId
-//     console.log(id)
-//     const user = [id]
-//     console.log(user)
+        user, (error, results) => {   
 
-//     db.query('SELECT a.*, b.name FROM blog_posts a INNER join users b on a.users_id = b.id WHERE users_id = ? order by dt desc',
+            if (results.length > 0) { 
+                console.log(results)
+                res.render('userBlogs', { blogs: results, 
+                    loggedIn: authenticated          
+                 });
+            } else {
 
-//         user, (error, results) => {
+                console.log(error)
+                res.send("theres an error")
 
-//             results.forEach((result, i) => {//...........need to fix time stamp
-//                 results[i].dt = timestampToDate(results[i].dt)
-//             })
-//             if (results.length > 0) {
-
-//                 res.render('userBlogs', { blogs: results,
-//                     loggedIn: authenticated           });
-//             } else {
-
-//                 console.log(error)
-//                 res.send("theres an error")
-
-//             }
-//         })
-// });
-
-
-
-
-
-
-// app.get('/userSelect', (req, res) => {
-//     db.query("SELECT * FROM users", (error, results) => {
-
-
-//         res.render('userSelect', {
-//             users: results
-//         });
-//     });
-
-// });
-
-
+            }
+        })
+});
 
 
 
@@ -515,14 +562,13 @@ app.post('/createBlog/:userId', (req, res) => {
 
 
 
-// const timestampToDate = (date) => {
-
-//     const day = date.toLocaleDateString().split('/')[1];
-//     const month = date.toLocaleDateString().split('/')[0];
-//     const year = date.toLocaleDateString().split('/')[2];
-
-//     return `${day}/${month}/${year}`;
-// }
+app.get("/logout", (req, res) => {
+    authenticated = false;
+    res.cookie('jwt',{expires: 0});
+    res.render('homepage', {
+        loggedIn: authenticated,
+        });
+});
 
 
 

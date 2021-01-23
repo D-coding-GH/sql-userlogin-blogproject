@@ -1,5 +1,5 @@
 body{
-    background-color: rgb(89, 167, 167);
+    background-color: rgb(51, 161, 161);
 }
 
 nav{
@@ -87,5 +87,25 @@ nav li a{
     flex-direction: row;
     justify-content: space-evenly;
     padding: 30px 8px;
+
+}
+
+#blogpost{
+    display: flex;
+    justify-content: center;
+    width:550px;
+
+}
+
+#blogspace{
+    display: flex;
+    justify-content: center;
+}
+
+.delete{
+    display: flex;
+    justify-content: center;
+    padding-top: 25px;
+    
 
 }

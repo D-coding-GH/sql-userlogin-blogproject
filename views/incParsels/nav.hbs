@@ -6,14 +6,18 @@
             <li>Home</li>
         </a>
         {{#if loggedIn}}
-        <a class="nav" href="/profile">
+        <a class="nav" href="/profile/{{userId}}">
             <li>profile</li>
         </a>
-        <a class="nav" href="/allUsers">
-            <li>All Users</li>
+        <a class="nav" href="/updateProfile/{{userId}}">
+            <li>update profile</li>
         </a>
-        <a class="nav" href="/blogPosts">
+        <a class="nav" href="/userBlogs/{{userId}}">
             <li>All Blog Posts</li>
+        </a>
+
+        <a class="nav" href="/createBlog/{{userId}}">
+            <li>create blog</li>
         </a>
         {{else}}
         <a class="nav" href="/register">

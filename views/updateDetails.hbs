@@ -9,6 +9,9 @@
 </head>
 <body>
      {{>nav}}
+
+    <h1 class="display-5" >UPDATE PROFILE</h1>
+
     <div class= "updateContainer"  >
         <form action="/updated/{{userId}}" method="POST">
             
@@ -35,7 +38,7 @@
 
             <div class="input-group mb-3">
             <span class="input-group-text" id="inputGroup-sizing-default">PASSWORD</span>
-            <input required type="text" name="userPassword" id="userPassword" value="{{password}}"/><br />
+            <input required type="password" name="userPassword" id="userPassword" value="{{password}}"/><br />
             </div>
 
 
@@ -43,6 +46,9 @@
             
     {{#if errorMessage}}   
         <h4 class ="alert alert-danger mt-4">{{errorMessage}}</h4>
+    {{/if}} 
+    {{#if Message}}   
+        <h4 class ="alert alert-danger mt-4">{{Message}}</h4>
     {{/if}} 
 
             <button type="submit">Save Update</button>

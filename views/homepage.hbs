@@ -9,6 +9,37 @@
 </head>
 <body>
     {{>nav this}}
+    <h1 class="display-5" >BLOGGERS WORLD</h1>
+
+    <h1 class="display-5" >Recent Posts</h1>
+
+
+<div id="blogspace">
+    
+    {{#each blogs}}
+    <div class="card text-center" id="blogpost" >
+        <div class="card-header" >
+            blog posts
+        </div>
+        <div class="card-body">
+
+            <h5 class="card-title">{{this.title}}</h5>
+            <p class="card-text">{{this.body}}</p>
+
+
+
+        </div>
+        <div class="card-footer text-muted">
+
+        </div>
+    </div>
+
+{{/each}}
+</div>
+
+
+
+
 
  {{#if message}}   
         <h4 class ="alert alert-danger mt-4">{{message}}</h4>

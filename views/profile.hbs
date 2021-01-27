@@ -10,7 +10,7 @@
 </head>
 <body>
     {{>nav this}}
-    <h1>userinfo page</h1>
+   <h1 class="display-5" >PROFILE</h1>
 
          <div class="container">
             <div class="row g-2">
@@ -52,7 +52,12 @@
         <form action="/userBlogs/{{userId}}" method="get">
             <button class="btn btn-primary" type="submit"> user blogs</button>
         </form>
-    </div>
+    
+
+     <form action="/deleteuser/{{userId}}" method="POST">
+            <button id="bMargin" class="btn btn-danger" type="submit">Delete Profile</button>
+    </form>
+</div>
     {{#if errorMessage}}   
         <h4 class ="alert alert-danger mt-4">{{errorMessage}}</h4>
     {{/if}} 

@@ -13,6 +13,8 @@ dotenv.config({ path: './.env' })
 
 const app = express();
 
+///........mySQL datavbase connection with dotenv protection
+
 const db = mysql.createConnection({
     host: process.env.DATABASE_HOST,
     user: process.env.DATABASE_USER,
@@ -46,11 +48,12 @@ hbs.registerPartials(partialPath)
 const publicDirectory = path.join(__dirname, '/public');
 app.use(express.static(publicDirectory));
 
-
-
 app.set('view engine', 'hbs');
 
 app.set('views', viewsPath);
+
+
+//....Homepage route, database query created to pull random blog posts for viewing on the landing page
 
 app.get('/', (req, res) => {
 
@@ -73,8 +76,11 @@ app.get('/', (req, res) => {
 
 })
 
+app.get('/register', (req, res) => {
+    res.render('register');
+});
 
-
+//.........................Register user to the database, includeds hashed password
 
 app.post('/registerUser', async (req, res) => {
 
@@ -128,16 +134,17 @@ app.post('/registerUser', async (req, res) => {
     console.log(hashedPassword)
 })
 
-app.get('/register', (req, res) => {
-    res.render('register');
-});
+
 
 
 app.get('/loginPage', (req, res) => {
     res.render('loginPage');
 });
 
-//........checked hashed password
+
+//.........................User login route, jwt cookie created, renders profile page with user details
+//.........................and extra liks to the nav bar
+
 
 app.post('/userLogin', async (req, res) => {
 
@@ -191,6 +198,7 @@ app.post('/userLogin', async (req, res) => {
  
 )});
   
+//.........................profile page route
 
 app.get('/profile/:id', (req, res) => {
 
@@ -216,6 +224,7 @@ app.get('/profile/:id', (req, res) => {
     })
 })
 
+//.........................route to update user pages with all needed details across
 
 
 app.get('/updateProfile/:id', (req, res,) => {
@@ -243,6 +252,7 @@ app.get('/updateProfile/:id', (req, res,) => {
 })
 
 
+//.........................update user details, check user emails does not already exist, creates hashed password
 
 
 app.post('/updated/:userId', async (req, res,) => {
@@ -317,28 +327,7 @@ app.post('/updated/:userId', async (req, res,) => {
 
 
 
-app.post("/deleteuser/::userId", (req, res) => {
-
-    const id = req.params.id;
-    console.log(id)
-    let query = 'DELETE FROM users WHERE id= ?';
-    let user = [id];
-
-
-    db.query(query, user, (error, results) => {
-        if (error) {
-            res.send("there was an error")
-        } else {
-            const message = "PROFILE DELETED";
-
-            res.render("homepage", {
-                message: message
-            }
-            )
-        }
-    })
-
-})
+//.........................creat new blog post route direct to create new blog page
 
 app.get('/createBlog/:userId', (req, res) => {
     const id = req.params.userId;
@@ -349,7 +338,7 @@ app.get('/createBlog/:userId', (req, res) => {
     });
 })
 
-
+//.........................userblog create route adds to mySQL database 
 
 app.post('/createBlog/:userId', (req, res) => {
 
@@ -386,6 +375,7 @@ app.post('/createBlog/:userId', (req, res) => {
     })
 });
 
+//.........................renders all users blogs to the page to view
 
 app.get('/userBlogs/:userId', (req, res) => {
 
@@ -414,7 +404,7 @@ app.get('/userBlogs/:userId', (req, res) => {
 });
 
 
-
+//.........................delete users profile form database
 
 app.post("/deleteuser/:id", (req, res) => {
 
@@ -439,6 +429,9 @@ app.post("/deleteuser/:id", (req, res) => {
 })
 
 
+
+
+//.........................user logout
 
 app.get("/logout", (req, res) => {
     authenticated = false;

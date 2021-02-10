@@ -15,37 +15,35 @@
 
     {{>nav}}
 
-    <h1 class="display-5" >ALL YOUR POSTS</h1>
-    <div  id="blogspace">
-{{#each blogs}}
-   
-        <div class="card text-center" id="blogpost"   >
-            
+    <h1 class="display-5">ALL YOUR POSTS</h1>
+    <div id="blogspace">
+        {{#each blogs}}
+
+        <div class="card text-center" id="blogpost">
+
             <div class="card-header">
-                 <h5 class="card-title"></h5>{{this.title}}</h5>
-        
+                <h5 class="card-title"></h5>{{this.title}}</h5>
+
             </div>
-              <div class="card-body">
-        
-                
+            <div class="card-body">
+
+
                 <p class="card-text">{{this.body}}</p>
-        
-        
+
+
                 {{!-- <form action="/deleteUsersPost/{{this.id}}" method="POST">
                     <button id="bMargin" class="btn btn-success" type="submit">Delete Blog Post</button>
                 </form> --}}
-             </div>
+            </div>
             <div class="card-footer text-muted">
-        
-        </div>
 
-</dv>
-    {{/each }}
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
-        crossorigin="anonymous"></script>
+            </div>
+
+            </dv>
+            {{/each }}
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+                integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
+                crossorigin="anonymous"></script>
 </body>
 
 </html>
-
-

@@ -143,7 +143,7 @@ app.get('/loginPage', (req, res) => {
 
 
 //.........................User login route, jwt cookie created, renders profile page with user details
-//.........................and extra liks to the nav bar
+//.........................and extra links to the nav bar
 
 
 app.post('/userLogin', async (req, res) => {
@@ -152,9 +152,9 @@ app.post('/userLogin', async (req, res) => {
     const password = req.body.userPassword;;
     db.query('SELECT * FROM users WHERE email =? ', [email], async (error, results) => {
 
-        if(results.length >0){
+        if (results.length > 0) {
             const comparision = await bcrypt.compare(password, results[0].password)
-            if(comparision){
+            if (comparision) {
                 authenticated = true;
                 const id = results[0].id
                 const token = jwt.sign({ id }, process.env.JWT_SECERT, {
@@ -178,27 +178,28 @@ app.post('/userLogin', async (req, res) => {
                     loggedIn: authenticated,
                 })
             }
-            
-            else{
+
+            else {
                 res.status(401).render('loginPage', {
                     message: "email or password incorrect",
                     loggedIn: authenticated,
                 })
             }
-          }
-          else{
+        }
+        else {
             res.status(401).render('loginPage', {
                 message: "email or password incorrect",
                 loggedIn: authenticated,
             })
-          }
         }
-       
-  
- 
-)});
-  
-//.........................profile page route
+    }
+
+
+
+    )
+});
+
+//.........................profile page link/route
 
 app.get('/profile/:id', (req, res) => {
 
@@ -224,7 +225,7 @@ app.get('/profile/:id', (req, res) => {
     })
 })
 
-//.........................route to update user pages with all needed details across
+//.........................route/link to update user pages which carrys all needed details to the page
 
 
 app.get('/updateProfile/:id', (req, res,) => {
@@ -286,13 +287,13 @@ app.post('/updated/:userId', async (req, res,) => {
             res.send("There was an error")
         } else {
 
-            if (user.find( user => user.email === email)) {
+            if (user.find(user => user.email === email)) {
 
                 const errorMessage = "ERROR EMAIL ALREADY EXISTS";
                 console.log(error)
 
                 res.render("updateDetails", {
-                    
+
                     errorMessage: errorMessage,
                     loggedIn: authenticated
                 })
@@ -314,7 +315,7 @@ app.post('/updated/:userId', async (req, res,) => {
 
                             userId: id,
                             loggedIn: authenticated,
-                            Message:Message
+                            Message: Message
                         })
                     }
                 })
@@ -327,7 +328,7 @@ app.post('/updated/:userId', async (req, res,) => {
 
 
 
-//.........................creat new blog post route direct to create new blog page
+//.........................create new blog post route/link direct to create new blog page
 
 app.get('/createBlog/:userId', (req, res) => {
     const id = req.params.userId;
@@ -338,7 +339,7 @@ app.get('/createBlog/:userId', (req, res) => {
     });
 })
 
-//.........................userblog create route adds to mySQL database 
+//.........................userblog create page which adds to users mySQL database 
 
 app.post('/createBlog/:userId', (req, res) => {
 
@@ -404,7 +405,7 @@ app.get('/userBlogs/:userId', (req, res) => {
 });
 
 
-//.........................delete users profile form database
+//.........................delete users profile from database
 
 app.post("/deleteuser/:id", (req, res) => {
 
@@ -442,6 +443,7 @@ app.get("/logout", (req, res) => {
 
     });
 });
+
 
 
 

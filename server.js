@@ -143,7 +143,7 @@ app.get('/loginPage', (req, res) => {
 
 
 //.........................User login route, jwt cookie created, renders profile page with user details
-//.........................and extra liks to the nav bar
+//.........................and extra links to the nav bar
 
 
 app.post('/userLogin', async (req, res) => {
@@ -198,7 +198,7 @@ app.post('/userLogin', async (req, res) => {
  
 )});
   
-//.........................profile page route
+//.........................profile page link/route
 
 app.get('/profile/:id', (req, res) => {
 
@@ -224,7 +224,7 @@ app.get('/profile/:id', (req, res) => {
     })
 })
 
-//.........................route to update user pages with all needed details across
+//.........................route/link to update user pages which carrys all needed details to the page
 
 
 app.get('/updateProfile/:id', (req, res,) => {
@@ -327,7 +327,7 @@ app.post('/updated/:userId', async (req, res,) => {
 
 
 
-//.........................creat new blog post route direct to create new blog page
+//.........................create new blog post route/link direct to create new blog page
 
 app.get('/createBlog/:userId', (req, res) => {
     const id = req.params.userId;
@@ -338,7 +338,7 @@ app.get('/createBlog/:userId', (req, res) => {
     });
 })
 
-//.........................userblog create route adds to mySQL database 
+//.........................userblog create page which adds to users mySQL database 
 
 app.post('/createBlog/:userId', (req, res) => {
 
@@ -404,7 +404,7 @@ app.get('/userBlogs/:userId', (req, res) => {
 });
 
 
-//.........................delete users profile form database
+//.........................delete users profile from database
 
 app.post("/deleteuser/:id", (req, res) => {
 

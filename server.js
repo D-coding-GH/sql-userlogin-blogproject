@@ -152,9 +152,9 @@ app.post('/userLogin', async (req, res) => {
     const password = req.body.userPassword;;
     db.query('SELECT * FROM users WHERE email =? ', [email], async (error, results) => {
 
-        if(results.length >0){
+        if (results.length > 0) {
             const comparision = await bcrypt.compare(password, results[0].password)
-            if(comparision){
+            if (comparision) {
                 authenticated = true;
                 const id = results[0].id
                 const token = jwt.sign({ id }, process.env.JWT_SECERT, {
@@ -178,26 +178,27 @@ app.post('/userLogin', async (req, res) => {
                     loggedIn: authenticated,
                 })
             }
-            
-            else{
+
+            else {
                 res.status(401).render('loginPage', {
                     message: "email or password incorrect",
                     loggedIn: authenticated,
                 })
             }
-          }
-          else{
+        }
+        else {
             res.status(401).render('loginPage', {
                 message: "email or password incorrect",
                 loggedIn: authenticated,
             })
-          }
         }
-       
-  
- 
-)});
-  
+    }
+
+
+
+    )
+});
+
 //.........................profile page link/route
 
 app.get('/profile/:id', (req, res) => {
@@ -286,13 +287,13 @@ app.post('/updated/:userId', async (req, res,) => {
             res.send("There was an error")
         } else {
 
-            if (user.find( user => user.email === email)) {
+            if (user.find(user => user.email === email)) {
 
                 const errorMessage = "ERROR EMAIL ALREADY EXISTS";
                 console.log(error)
 
                 res.render("updateDetails", {
-                    
+
                     errorMessage: errorMessage,
                     loggedIn: authenticated
                 })
@@ -314,7 +315,7 @@ app.post('/updated/:userId', async (req, res,) => {
 
                             userId: id,
                             loggedIn: authenticated,
-                            Message:Message
+                            Message: Message
                         })
                     }
                 })
@@ -442,6 +443,7 @@ app.get("/logout", (req, res) => {
 
     });
 });
+
 
 
 
